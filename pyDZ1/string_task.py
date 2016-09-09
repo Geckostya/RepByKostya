@@ -1,22 +1,16 @@
-
 def verbing(s):
-	if len(s)>= 3:
-		if s[-3:]!="ing":
-			return s+"ing"
-		else: return s[:-3]+"ly"
-	else: return s		
+	return s  + (len(s)>=3 and (s[-3:] =="ing" and "ly" or "ing") or "")
    
-print(verbing("reading"))
+print(verbing("re"))
 
 def not_bad(s):
-	if s.find("not")<s.find("bad"):
-		s = s.replace(s[s.find("not") : s.find("bad") + 3], "good")
-	return s
+	n,b = s.find("not"), s.find("bad")
+	if n<b:
+		return s.replace(s[n : b + 3], "good")
 
 print(not_bad("This dinner is not that bad!"))
 
 def front_back(a, b):
-	x,y=len(a)//2+len(a)%2, len(b)//2+len(b)%2
-	c=a[:x]+b[:y]+a[x:]+b[y:]
-	return c
+	x,y=(len(a)+1)//2, (len(b)+1)//2
+	return a[:x]+b[:y]+a[x:]+b[y:]
 print(front_back("aaaaa", "bbbb"))
