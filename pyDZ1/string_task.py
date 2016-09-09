@@ -9,11 +9,13 @@ print(verbing("reading"))
 
 def not_bad(s):
 	n,b = s.find("not"), s.find("bad")
-	if n<b and (n>0 or s[:3]=="not"):#[:3] - it's a first 3 letters; if "not something bad bla bla" n==0, but we have "not"
+	if n<b and n>-1:
 		return s[:n]+"good"+s[b+3:]
 	return s
 	
 print(not_bad("This dinner is not that bad!"))
+print(not_bad("not that bad, isn't it?"))
+print(not_bad("that's bad, isn't it?"))
 
 def front_back(a, b):
 	x,y = (len(a)+1)//2, (len(b)+1)//2
