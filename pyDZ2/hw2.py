@@ -17,10 +17,10 @@ def findDup(parent):
 def hashfile(path):
     file = open(path, 'rb')
     hasher = hashlib.md5()
-    buf = file.read()
+    buf = file.read(4096)
     while len(buf) > 0:
         hasher.update(buf)
-        buf = file.read()
+        buf = file.read(4096)
     file.close()
     return hasher.hexdigest()
  
