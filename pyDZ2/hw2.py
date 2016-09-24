@@ -5,7 +5,7 @@ def findDup(parent):
 	dups = {}
 	for dirName, subdirs, fileList in os.walk(parent):
 		for filename in fileList:
-			if filename[0]!='.':
+			if filename[0]!='.' and filename[0]!='~':
 				path = os.path.join(dirName, filename)
 				hash = hashfile(path)
 				if hash in dups:
@@ -17,19 +17,21 @@ def findDup(parent):
 def hashfile(path):
 	digest = hashlib.md5()
 	with open(path, "rb") as f:
-		digest.update(f.read())
+		buf = f.read(1024)
+		while len(buf)>0:
+			digest.update(buf)
+			buf = f.read(1024)
 	return digest.hexdigest()
-
+def printResult(dupsDict):
+	results = list(filter( lambda x: len(x) > 1, dupsDict.values()))
+	for result in results:
+		print(":".join(result))
 if len(sys.argv) > 1:
 	dups = {}
 	i = sys.argv[1]
 	leng = len(i)+1
 	if os.path.exists(i):
-		# Find the dups
 		dups = findDup(i)
-	#print
-	results = list(filter( lambda x: len(x) > 1, dups.values()))
-	for result in results:
-		print(":".join(result))
+		printResult(dups);	
 else:
 	print('wrong format')
