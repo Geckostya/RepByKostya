@@ -1,17 +1,17 @@
 import os, sys
 import hashlib
+from collections import defaultdict
 
 def findDup(parent):
-	dups = {}
+	dups = defaultdict(list)
 	for dirName, subdirs, fileList in os.walk(parent):
 		for filename in fileList:
 			if filename[0]!='.' and filename[0]!='~':
 				path = os.path.join(dirName, filename)
-				hash = hashfile(path)
-				if hash in dups:
-					dups[hash].append(path[leng:])
-				else:
-					dups[hash] = [path[leng:]]
+				path = os.path.abspath(path)
+				if not os.path.islink(path):
+					hash = hashfile(path)
+					dups[hash].append(path)
 	return dups
 
 def hashfile(path):
@@ -22,16 +22,16 @@ def hashfile(path):
 			digest.update(buf)
 			buf = f.read(1024)
 	return digest.hexdigest()
-def printResult(dupsDict):
-	results = list(filter( lambda x: len(x) > 1, dupsDict.values()))
-	for result in results:
-		print(":".join(result))
+	
+def printResult(dups):
+	for result in dups:
+		if len(dups[result])>1:
+			print(":".join(dups[result]))
+		
 if len(sys.argv) > 1:
 	dups = {}
 	i = sys.argv[1]
-	leng = len(i)+1
 	if os.path.exists(i):
-		dups = findDup(i)
-		printResult(dups);	
+		printResult(findDup(i));	
 else:
 	print('wrong format')
