@@ -31,6 +31,7 @@ class Function:
     def evaluate(self, scope):
         for limb in self.body:
             cur_limb = limb.evaluate(scope)
+        return cur_limb
 
 
 class FunctionDefinition:
@@ -53,7 +54,7 @@ class FunctionCall:
         call_scope = Scope(scope)
         for arg, key in zip(self.args, function.args):
             call_scope[key] = arg.evaluate(call_scope)
-        return self.fun_expr.evaluate(call_scope)
+        return function.evaluate(call_scope)
 
 
 class Conditional:
@@ -80,9 +81,8 @@ class Print:
 
     def evaluate(self, scope):
         self.value = self.expr.evaluate(scope)
-
-    print(int(self.value.value))
-    return self.value
+        print(int(self.value.value))
+        return self.value
 
 
 class Read:
@@ -91,6 +91,7 @@ class Read:
 
     def evaluate(self, scope):
         scope[self.name] = Number(int(input()))
+        return scope[self.name]
 
 
 class Reference:
@@ -170,19 +171,19 @@ def my_tests():
     s2["pr1"].evaluate(s2)
     Read("num3").evaluate(s1)
     s1["num3"] = UnaryOperation("-",
-                 BinaryOperation(s1["num2"], "/", s1["num3"]).evaluate(s1)
-                                ).evaluate(s1)
+                                BinaryOperation(s1["num2"], "/", s1["num3"]).evaluate(s1)
+                               ).evaluate(s1)
     s2["pr1"] = Print(s2["num3"])
     s2["pr1"].evaluate(s2)
     s1["num1"] = BinaryOperation(s1["num1"], "==", s1["num3"]).evaluate(s1)
     print ("num1: ", end='')
     Print(s1["num1"]).evaluate(s1)
     Conditional(s1["num1"],
-                    [Print(BinaryOperation(s1["num2"], "*", Number(7000)))],
-                        [Print(UnaryOperation("!", Number(0)))]
-                ).evaluate(s2)
+                [Print(BinaryOperation(s1["num2"], "*", Number(7000)))],
+                [Print(UnaryOperation("!", Number(0)))]
+               ).evaluate(s2)
 
 
 if __name__ == '__main__':
     example()
-    my_tests()
+    #my_tests()
