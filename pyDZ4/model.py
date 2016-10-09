@@ -32,7 +32,7 @@ class Function:
         return self
 
     def evaluate(self, scope):
-        cur_limb = self
+        cur_limb = Number(42)
         for limb in self.body:
             cur_limb = limb.evaluate(scope)
         return cur_limb
