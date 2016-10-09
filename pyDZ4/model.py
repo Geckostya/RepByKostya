@@ -1,18 +1,16 @@
 ﻿class Scope:
     def __init__(self, parent=None):
-        self.MyDict = {}
+        self.my_dict = dict()
         self.parent = parent
 
     def __getitem__(self, key):
-        if key in self.MyDict:
-            return self.MyDict[key]
+        if key in self.my_dict:
+            return self.my_dict[key]
         elif self.parent is not None:
             return self.parent[key]
-        else:
-            return Number(42)
 
     def __setitem__(self, key, value):
-        self.MyDict[key] = value
+        self.my_dict[key] = value
 
 
 class Number:
@@ -81,9 +79,9 @@ class Print:
         self.expr = expr
 
     def evaluate(self, scope):
-        self.value = self.expr.evaluate(scope)
-        print(int(self.value.value))
-        return self.value
+        to_print = self.expr.evaluate(scope)
+        print(to_print.value)
+        return to_print
 
 
 class Read:
@@ -99,14 +97,12 @@ class Reference:
     def __init__(self, name):
         self.name = name
 
-    def __call__(self, scope):
-        return self.evaluate(scope)
-
     def evaluate(self, scope):
         return scope[self.name]
 
 
-BinaryDict = {
+class BinaryOperation:
+    binary_dict = {
     "+": lambda x, y: x+y,
     "-": lambda x, y: x-y,
     "*": lambda x, y: x*y,
@@ -118,12 +114,10 @@ BinaryDict = {
     ">": lambda x, y: int(x > y),
     "<=": lambda x, y: int(x <= y),
     ">=": lambda x, y: int(x >= y),
-    "&&": lambda x, y: int(x and y),
-    "||": lambda x, y: int(x or y)
-}
+    "&&": lambda x, y: x and y,
+    "||": lambda x, y: x or y
+    }
 
-
-class BinaryOperation:
     def __init__(self, lhs, op, rhs):
         self.op = op
         self.lhs = lhs
@@ -132,20 +126,19 @@ class BinaryOperation:
     def evaluate(self, scope):
         lhs = self.lhs.evaluate(scope).value
         rhs = self.rhs.evaluate(scope).value
-        self.value = Number(BinaryDict[self.op](lhs, rhs))
+        self.value = Number(BinaryOperation.binary_dict[self.op](lhs, rhs))
         return self.value
 
 
-UnaryDict = {"-": lambda x: -x, "!": lambda x: not x}
-
-
 class UnaryOperation:
+    unary_dict = {"-": lambda x: -x, "!": lambda x: int(not x)}
+
     def __init__(self, op, expr):
         self.op = op
         self.expr = expr
 
     def evaluate(self, scope):
-        self.value = Number(UnaryDict[self.op](self.expr.evaluate(scope).value))
+        self.value = Number(UnaryOperation.unary_dict[self.op](self.expr.evaluate(scope).value))
         return self.value
 
 
