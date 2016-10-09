@@ -61,7 +61,8 @@ class FunctionCall:
         call_scope = Scope(scope)
         for arg, key in zip(self.args, function.args):
             call_scope[key] = arg.evaluate(call_scope)
-        return function.evaluate(call_scope)
+        scope = call_scope
+        return function.evaluate(scope)
 
 
 class Conditional:
