@@ -28,8 +28,11 @@ class Function:
         self.args = args
         self.body = body
 
+    def __call__(self, scope):
+        return self
+
     def evaluate(self, scope):
-        cur_limb = Number(42)
+        cur_limb = self
         for limb in self.body:
             cur_limb = limb.evaluate(scope)
         return cur_limb
@@ -39,6 +42,9 @@ class FunctionDefinition:
     def __init__(self, name, function):
         self.name = name
         self.function = function
+
+    def __call__(self, scope):
+        return self.evaluate(scope)
 
     def evaluate(self, scope):
         scope[self.name] = self.function
@@ -51,7 +57,7 @@ class FunctionCall:
         self.args = args
 
     def evaluate(self, scope):
-        function = self.fun_expr.evaluate(scope)
+        function = self.fun_expr(scope)
         call_scope = Scope(scope)
         for arg, key in zip(self.args, function.args):
             call_scope[key] = arg.evaluate(call_scope)
@@ -163,6 +169,9 @@ def example():
 
 
 def my_tests():
+    print("start test")
+    program = FunctionCall(Function( ('a') , [Print(Reference('a'))]), [Number(10)])
+    program.evaluate(Scope())
     s1 = Scope()
     s1["num1"] = Number(2)
     s1["num2"] = Number(4)
@@ -170,6 +179,7 @@ def my_tests():
     s2["num1"] = Number(6)
     s2["pr1"] = Print(s2['num1'])
     s2["pr1"].evaluate(s2)
+    print("write num")
     Read("num3").evaluate(s1)
     s1["num3"] = UnaryOperation("-",
                                 BinaryOperation(s1["num2"], "/", s1["num3"]).evaluate(s1)
@@ -183,8 +193,8 @@ def my_tests():
                 [Print(BinaryOperation(s1["num2"], "*", Number(7000)))],
                 [Print(UnaryOperation("!", Number(0)))]
                ).evaluate(s2)
-
+    print("end test")
 
 if __name__ == '__main__':
     example()
-    #my_tests()
+    my_tests()
