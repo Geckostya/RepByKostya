@@ -106,6 +106,9 @@ class Reference:
     def __init__(self, name):
         self.name = name
 
+    def __call__(self, scope):
+        return self.evaluate(scope)
+
     def evaluate(self, scope):
         return scope[self.name]
 
@@ -173,6 +176,9 @@ def my_tests():
     print("start test")
     program = FunctionCall(Function( ('a') , [Print(Reference('a'))]), [Number(10)])
     program.evaluate(Scope())
+    testScope = Scope()
+    program = FunctionDefinition('foo',Function( ('a') , [Print(Reference('a'))])).evaluate(testScope)
+    program = FunctionCall(Reference('foo'),[Number(43)]).evaluate(testScope)
     s1 = Scope()
     s1["num1"] = Number(2)
     s1["num2"] = Number(4)
