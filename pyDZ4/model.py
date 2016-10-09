@@ -28,9 +28,6 @@ class Function:
         self.args = args
         self.body = body
 
-    def __call__(self, scope):
-        return self
-
     def evaluate(self, scope):
         cur_limb = Number(42)
         for limb in self.body:
@@ -43,9 +40,6 @@ class FunctionDefinition:
         self.name = name
         self.function = function
 
-    def __call__(self, scope):
-        return self.evaluate(scope)
-
     def evaluate(self, scope):
         scope[self.name] = self.function
         return self.function
@@ -57,12 +51,11 @@ class FunctionCall:
         self.args = args
 
     def evaluate(self, scope):
-        function = self.fun_expr(scope)
+        function = self.fun_expr.evaluate(scope)
         call_scope = Scope(scope)
         for arg, key in zip(self.args, function.args):
-            call_scope[key] = arg.evaluate(call_scope)
-        scope = call_scope
-        return function.evaluate(scope)
+            call_scope[key] = arg.evaluate(scope)
+        return function.evaluate(call_scope)
 
 
 class Conditional:
@@ -174,11 +167,8 @@ def example():
 
 def my_tests():
     print("start test")
-    program = FunctionCall(Function( ('a') , [Print(Reference('a'))]), [Number(10)])
+    program = FunctionCall(FunctionDefinition('foo',Function(('a'), [Print(Reference('a'))])), [Number(10)])
     program.evaluate(Scope())
-    testScope = Scope()
-    program = FunctionDefinition('foo',Function( ('a') , [Print(Reference('a'))])).evaluate(testScope)
-    program = FunctionCall(Reference('foo'),[Number(43)]).evaluate(testScope)
     s1 = Scope()
     s1["num1"] = Number(2)
     s1["num2"] = Number(4)
