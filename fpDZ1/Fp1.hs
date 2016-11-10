@@ -1,15 +1,14 @@
-
 head' :: [a] -> a
 head' [] = error "empty list"
-head' (x:xs) = x
+head' (x:_) = x
 
 tail' :: [a] -> [a]
 tail' [] = [] 
-tail' (x:xs) = xs
+tail' (_:xs) = xs
 
 len' :: Num a => [b] -> a
 len' [] = 0
-len' (x:xs) = len' xs + 1 
+len' (_:xs) = len' xs + 1 
 
 take' :: Int -> [a] -> [a]
 take' a [] = []
@@ -21,15 +20,14 @@ drop' a (x:xs) = if a>0 then drop' (a-1) xs else x:xs
 
 filter' :: (a -> Bool) -> [a] -> [a]
 filter' f [] = []
-filter' f (x:xs) = if f x == True then x:filter' f xs  else filter' f xs
+filter' f (x:xs) = if f x then x:filter' f xs  else filter' f xs
 
 foldl' :: (a -> b -> a) -> a -> [b] -> a
 foldl' f z [] = z
 foldl' f z (x:xs) = foldl' f (f z x) xs
 
 concat' :: [a] -> [a] -> [a]
-concat' [] [] = []
-concat' [] (y:ys) = y : concat' [] ys 
+concat' [] (ys) = ys 
 concat' (x:xs) ys = x: concat' xs ys
 
 quickSort' :: Ord a => [a] -> [a]
