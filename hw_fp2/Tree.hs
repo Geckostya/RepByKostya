@@ -31,3 +31,6 @@ delete ks (Branch k v left right)
 
         jointo (Branch k v Empty right) that = Branch k v that right
         jointo (Branch k v left right) that  = jointo left that
+
+listToTree [] tree     = tree
+listToTree (x:xs) tree = (insert x x (listToTree xs tree))
