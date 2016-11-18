@@ -7,14 +7,17 @@ data BinaryTree k v = Empty | Branch k v (BinaryTree k v) (BinaryTree k v) deriv
 
 lookup :: Ord k => k -> BinaryTree k v -> Maybe v
 lookup ks Empty = Nothing
-lookup ks (Branch k v left right) | ks == k   = Just v
-                                  | ks <= k   = lookup ks left
-                                  | otherwise = lookup ks right 
+lookup ks (Branch k v left right) 
+    | ks == k   = Just v
+    | ks <= k   = lookup ks left
+    | otherwise = lookup ks right 
 
 insert :: Ord k => k -> v -> BinaryTree k v -> BinaryTree k v
 insert k v Empty = Branch k v Empty Empty
-insert k v (Branch k2 v2 left right) | k <= k2   = Branch k2 v2 (insert k v left) right
-                                     | otherwise = Branch k2 v2 left (insert k v right)
+insert k v (Branch k2 v2 left right)
+    | k < k2    = Branch k2 v2 (insert k v left) right
+    | k > k2    = Branch k2 v2 left (insert k v right)
+    | otherwise = Branch k v left right
 
 delete :: Ord k => k -> BinaryTree k v -> BinaryTree k v
 delete ks Empty = Empty
