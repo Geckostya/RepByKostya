@@ -30,7 +30,7 @@ delete ks (Branch k v left right)
         del left right = jointo right left
 
         jointo (Branch k v Empty right) that = Branch k v that right
-        jointo (Branch k v left right) that  = jointo left that
+        jointo (Branch k v left right) that  = Branch k v (jointo left that) right
 
 listToTree [] tree     = tree
 listToTree (x:xs) tree = (insert x x (listToTree xs tree))
