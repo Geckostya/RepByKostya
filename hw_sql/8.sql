@@ -1,4 +1,4 @@
-select Country.Name, Capt.Name, Country.SurfaceArea
+select Country.Name, Country.Population, Country.SurfaceArea
 
 from ((City as Capt inner join Capital on Capt.Id = Capital.CityId) 
 	 inner join Country on Capt.CountryCode = Country.Code) 
@@ -8,7 +8,7 @@ from ((City as Capt inner join Capital on Capt.Id = Capital.CityId)
 group by Country.Code
 having Capt.Population < max(Ci.Population)
 
-order by Country.SurfaceArea /Country.Population desc, Country.Name 
+order by Country.Population/1.0 * Country.SurfaceArea desc
 ;
 
 /*Названия стран, у которых столица - не самый многочисленный город.
