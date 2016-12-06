@@ -8,7 +8,7 @@ from ((City as Capt inner join Capital on Capt.Id = Capital.CityId)
 group by Country.Code
 having Capt.Population < max(Ci.Population)
 
-order by Country.Population/1.0 * Country.SurfaceArea desc
+order by Country.Population/ Country.SurfaceArea desc, Country.Name
 ;
 
 /*Названия стран, у которых столица - не самый многочисленный город.
