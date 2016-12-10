@@ -12,8 +12,8 @@ Board::Board(int h, int w) {
 	for (int i = 0; i < h; i++)
 		board[i] = board[0] + i * w;
 
-	result = new int*[h];
-	result[0] = new int[h * w];
+	result = new res*[h];
+	result[0] = new res[h * w];
 	std::fill(result[0], result[0] + h * w, 0);
 	for (int i = 0; i < h; i++)
 		result[i] = result[0] + i * w;
@@ -32,6 +32,10 @@ Board::~Board() {
 
 void Board::move(int x, int y, cell_status sign) {
 	board[y][x] = sign;
+	result[y][x].h  = 1; 
+	result[y][x].v  = 1; 
+	result[y][x].d1 = 1; 
+	result[y][x].d2 = 1; 
 }
 
 bool Board::can_move(int x, int y, cell_status sign) const {
@@ -48,8 +52,6 @@ bool Board::can_move(int x, int y, cell_status sign) const {
 
 	if (all_is_ok)
 		return true;
-
-	printf("Bad move!\n");
 	return false;
 
 }
@@ -64,25 +66,23 @@ game_status Board::is_win() {
 			}
 
 			if (i > 0 && board[i - 1][j] == board[i][j] 
-				&& result[i - 1][j] >= result[i][j])
-				result[i][j] = result[i - 1][j] +1;
+				&& result[i - 1][j].v >= result[i][j].v)
+				result[i][j].v = result[i - 1][j].v +1;
 
 			if (j > 0 && board[i][j - 1] == board[i][j] 
-				&& result[i][j - 1] >= result[i][j])
-				result[i][j] = result[i][j - 1] +1;
+				&& result[i][j - 1].h >= result[i][j].h)
+				result[i][j].h = result[i][j - 1].h +1;
 
 			if (i > 0 && j > 0 && board[i - 1][j - 1] == board[i][j]
-				&& result[i - 1][j - 1] >= result[i][j])
-				result[i][j] = result[i - 1][j - 1] +1;
+				&& result[i - 1][j - 1].d1 >= result[i][j].d1)
+				result[i][j].d1 = result[i - 1][j - 1].d1 +1;
 
 			if (i > 0 && j < height-1 && board[i - 1][j + 1] == board[i][j]
-				&& result[i - 1][j + 1] >= result[i][j])
-				result[i][j] = result[i - 1][j + 1] +1;
+				&& result[i - 1][j + 1].d2 >= result[i][j].d2)
+				result[i][j].d2 = result[i - 1][j + 1].d2 +1;
 
-			if (result[i][j] == 0)
-				result[i][j] = 1;
-
-			if (result[i][j] >= 5)
+			if (result[i][j].h >= 5 || result[i][j].v >=5 ||
+				result[i][j].d1 >= 5 || result[i][j].d2 >=5)
 				return game_win;
 		}
 

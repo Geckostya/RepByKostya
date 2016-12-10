@@ -49,6 +49,8 @@ void BoardView::do_game_cycle() {
 
 			if (board.can_move(x, y, to_cell))
 				break;
+			else
+				printf("Bad move!\n");
 		}
 
 		board.move(x, y, to_cell);
@@ -60,12 +62,7 @@ void BoardView::do_game_cycle() {
 				silence = false;
 				show_board();
 
-				if (playerX)
-					printf("X");
-				else
-					printf("O");
-
-				printf(" wins!\n");
+				printf("%c wins!\n", sign);
 				return;
 			};
 			break;

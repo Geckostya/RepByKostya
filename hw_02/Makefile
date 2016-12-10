@@ -16,22 +16,26 @@ bin/Board.o: src/Board.cpp
 bin/BoardView.o: src/BoardView.cpp
 	$(CC) $(CFLAGS) -c src/BoardView.cpp -o bin/BoardView.o
 
-main: bin/main.o bin/Board.o bin/BoardView.o
-	$(CC) $(CFLAGS) bin/main.o bin/Board.o bin/BoardView.o -o main
+bin/NcursesBoardView.o: src/NcursesBoardView.cpp
+	$(CC) $(CFLAGS) -c src/NcursesBoardView.cpp -o bin/NcursesBoardView.o
 
 
-bin/test.o: test/test.cpp
-	$(CC) $(CFLAGS) -c test/test.cpp -o bin/test.o
+main: bin/main.o bin/Board.o bin/BoardView.o bin/NcursesBoardView.o
+	$(CC) $(CFLAGS) bin/main.o bin/Board.o bin/BoardView.o bin/NcursesBoardView.o -o main -lncurses
 
-bin/Test.o: test/Test.cpp
-	$(CC) $(CFLAGS) -c test/Test.cpp -o bin/Test.o
 
-tests: bin/test.o bin/Test.o bin/Board.o
-	$(CC) $(CFLAGS) bin/test.o bin/Board.o bin/Test.o -o tests
+bin/test.o: tests/test.cpp
+	$(CC) $(CFLAGS) -c tests/test.cpp -o bin/test.o
+
+bin/TestClass.o: tests/TestClass.cpp
+	$(CC) $(CFLAGS) -c tests/TestClass.cpp -o bin/TestClass.o
+
+test: bin/test.o bin/TestClass.o bin/Board.o
+	$(CC) $(CFLAGS) bin/test.o bin/Board.o bin/TestClass.o -o test
 
 
 clean:
-	rm -rf main bin
+	rm -rf main bin test
 
 val:
 	valgrind --tool=memcheck --leak-check=full --track-origins=yes ./main $(PARAM)

@@ -1,7 +1,6 @@
 #pragma once
-#include "Test.h"
+#include "TestClass.h"
 #include "Board.h"
-#define DO_CHECK(EXPR) check(EXPR, __FUNC__, __FILE__, __LINE__);
 
 class BoardTest: public Test {
 public:

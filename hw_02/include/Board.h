@@ -1,14 +1,24 @@
 #pragma once
-#include <cstdio>
 #include <algorithm>
 
 enum game_status{game_win, game_in_progress, game_draw};
 enum cell_status{cell_free, cell_X, cell_O};
 
+struct res{
+	char h, v, d1, d2;
+	int operator=(int i){
+		h = i;
+		v = i;
+		d1 = i;
+		d2 = i;
+		return i;
+	}
+};
+
 class  Board {
 private:
 	cell_status** board;
-	int** result;
+	res** result;
 	int widgth;
 	int height;
 
