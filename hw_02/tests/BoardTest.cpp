@@ -1,6 +1,6 @@
 #include "BoardTest.h"
 
-void BoardTest::testIsWin() {
+void BoardTest::testIsWin1() {
     Board b;
     b.move(0, 0, cell_X);
     b.move(0, 1, cell_X);

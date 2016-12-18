@@ -1,103 +1,129 @@
 #include "Board.h"
 
+void Board::create_board(){
+	board = new cell_status*[height];
+	board[0] = new cell_status[height * width];
+	std::fill(board[0], board[0] + height * width, cell_free);
+	for (int i = 0; i < height; i++)
+		board[i] = board[0] + i * width;
+}
+
+void Board::delete_board(){
+	delete[] board[0];
+	delete[] board;
+}
+
 Board::Board(int h, int w) {
 	if (h < 5)
 		h = 5;
 	if (w < 5)
 		w = 5;
 
-	board = new cell_status*[h];
-	board[0] = new cell_status[h * w];
-	std::fill(board[0], board[0] + h * w, cell_free);
-	for (int i = 0; i < h; i++)
-		board[i] = board[0] + i * w;
-
-	result = new res*[h];
-	result[0] = new res[h * w];
-	std::fill(result[0], result[0] + h * w, 0);
-	for (int i = 0; i < h; i++)
-		result[i] = result[0] + i * w;
+	used_cells = 0;
 
 	height = h;
-	widgth = w;
+	width = w;
+
+	create_board();
 }
 
 Board::~Board() {
-	delete[] board[0];
-	delete[] board;
+	delete_board();
+}
 
-	delete[] result[0];
-	delete[] result;
+int Board::save_game(){
+	FILE* f = fopen("saved_game", "wb");
+	if (f == NULL)
+		return 0;
+
+	fwrite(&height, sizeof(int32_t), 1, f);
+	fwrite(&width, sizeof(int32_t), 1, f);
+	fwrite(&used_cells, sizeof(int32_t), 1, f);
+
+	fwrite(board[0], sizeof(cell_status), height*width, f);
+
+
+	fclose(f);
+	return 1;
+}
+
+int Board::load_game(){
+	FILE* f = fopen("saved_game", "rb");
+	if (f == NULL)
+		return 0;
+
+	fread(&height, sizeof(int32_t), 1, f);
+	fread(&width, sizeof(int32_t), 1, f);
+	fread(&used_cells, sizeof(int32_t), 1, f);
+
+	delete_board();
+	create_board();
+
+	fread(board[0], sizeof(cell_status), height*width, f);
+	fclose(f);
+	return 1;
 }
 
 void Board::move(int x, int y, cell_status sign) {
 	board[y][x] = sign;
-	result[y][x].h  = 1; 
-	result[y][x].v  = 1; 
-	result[y][x].d1 = 1; 
-	result[y][x].d2 = 1; 
+	used_cells++; 
 }
 
 bool Board::can_move(int x, int y, cell_status sign) const {
-	bool all_is_ok = true;
 	if (sign == cell_free)
-		all_is_ok = false;
+		return false;
 
-	if (x >= this->get_widgth() || x < 0 ||
-		y >= this->get_height() || y < 0)
-		all_is_ok = false;
+	if (x >= width || x < 0 ||
+		y >= height || y < 0)
+		return false;
 
 	if (board[y][x] != cell_free)
-		all_is_ok = false;
+		return false;
 
-	if (all_is_ok)
-		return true;
-	return false;
+	return true;
 
 }
 
-game_status Board::is_win() {
-	bool draw = 1;
-	for (int i = 0; i < height; i++)
-		for (int j = 0; j < widgth; j++) {
-			if (board[i][j] == cell_free) {
-				draw = 0;
-				continue;
-			}
+void Board::check_cell(int x, int y, cell_status cur_cell, char& value){
+	if (x >= 0 && x < width && y >= 0 && y < height){
+		if (board[y][x] == cur_cell)
+			value++;
+		else
+			value = 0;
+	}
+}
 
-			if (i > 0 && board[i - 1][j] == board[i][j] 
-				&& result[i - 1][j].v >= result[i][j].v)
-				result[i][j].v = result[i - 1][j].v +1;
-
-			if (j > 0 && board[i][j - 1] == board[i][j] 
-				&& result[i][j - 1].h >= result[i][j].h)
-				result[i][j].h = result[i][j - 1].h +1;
-
-			if (i > 0 && j > 0 && board[i - 1][j - 1] == board[i][j]
-				&& result[i - 1][j - 1].d1 >= result[i][j].d1)
-				result[i][j].d1 = result[i - 1][j - 1].d1 +1;
-
-			if (i > 0 && j < height-1 && board[i - 1][j + 1] == board[i][j]
-				&& result[i - 1][j + 1].d2 >= result[i][j].d2)
-				result[i][j].d2 = result[i - 1][j + 1].d2 +1;
-
-			if (result[i][j].h >= 5 || result[i][j].v >=5 ||
-				result[i][j].d1 >= 5 || result[i][j].d2 >=5)
-				return game_win;
-		}
-
-	if (draw)
+game_status Board::is_win(int x, int y) {
+	if (used_cells >= width * height)
 		return game_draw;
+
+	cell_status cur_cell = board[y][x];
+
+	result check;
+	check = 0;
+
+	for (int i = -4; i < 5; i++){
+		check_cell(x + i, y, cur_cell, check.horizontal);
+		
+		check_cell(x, y + i, cur_cell, check.vertical);
+		
+		check_cell(x + i, y + i, cur_cell, check.first_diag);
+		
+		check_cell(x - i, y + i, cur_cell, check.second_diag);
+
+		if (check == 5)
+			return game_win;
+	}
 
 	return game_in_progress;
 }
 
-cell_status Board::get_cell(int x, int y) const {
-	return board[x][y];
+cell_status Board::get_cell(int i, int j) const {
+	return board[i][j];
 }
 
-int Board::get_widgth() const {
-	return widgth;
+int Board::get_width() const {
+	return width;
 }
 
 int Board::get_height() const {

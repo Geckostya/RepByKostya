@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -g -std=c++03 -I include -Wall -O2 -Wextra -Wshadow
+CFLAGS = -g -std=c++03 -I include -Wall -O0 -Wextra -Wshadow
 
 
 all: bin main
@@ -30,12 +30,15 @@ bin/test.o: tests/test.cpp
 bin/TestClass.o: tests/TestClass.cpp
 	$(CC) $(CFLAGS) -c tests/TestClass.cpp -o bin/TestClass.o
 
-test: bin/test.o bin/TestClass.o bin/Board.o
-	$(CC) $(CFLAGS) bin/test.o bin/Board.o bin/TestClass.o -o test
+bin/BoardTest.o: tests/BoardTest.cpp
+	$(CC) $(CFLAGS) -c tests/BoardTest.cpp -o bin/BoardTest.o
+
+test: bin/test.o bin/TestClass.o bin/Board.o bin/BoardTest.o
+	$(CC) $(CFLAGS) bin/test.o bin/Board.o bin/TestClass.o bin/BoardTest.o -o test
 
 
 clean:
-	rm -rf main bin test
+	rm -rf main bin test saved_game
 
 val:
 	valgrind --tool=memcheck --leak-check=full --track-origins=yes ./main $(PARAM)
