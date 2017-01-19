@@ -83,7 +83,7 @@ struct list {
 }
 
 void new_node(struct list* l) {
-	Node* n = malloc(sizeof(Node));
+	struct Node* n = malloc(sizeof(Node));
 	n->next = l->head;
 	l->head = n;
 }
@@ -187,7 +187,7 @@ void qsort (void* base, size_t num, size_t size,
 на буфер потока, и его показатели состояния. Файловые объекты обычно создаются с помощью вызова функций fopen или tmpfile,
 которые возвращают ссылку на объект связанный с файлом. 
 
-FILE * fopen( const	 char * fname, const char * modeopen ); 
+FILE* fopen(const char* fname, const char* modeopen); 
 	Функция fopen открывает файл, имя которого указано в параметре fname и связывает его с потоком, который может быть
 идентифицирован для выполнения различных операций с файлом. Операции с потоком, выполнение которых разрешено определяются
 параметром modeopen. 
@@ -199,7 +199,7 @@ FILE * fopen( const	 char * fname, const char * modeopen );
 Если файл был успешно открыт, функция возвращает указатель на объект файла, который используется для идентификации потока
 и выполнения операций с файлом. В противном случае, возвращается нулевой указатель. 
 
-int fclose( FILE * filestream ); 
+int fclose(FILE* filestream ); 
 	Функция fclose закрывает и разъединяет файл filestream, связанный с потоком. 
 Все внутренние буферы, связанные с потоком сбрасываются: содержание любого незаписанного буфера записывается и содержание
 любого непрочитанного буфера сбрасывается. Если файл успешно закрыт, возвращается нулевое значение. 
@@ -207,67 +207,67 @@ int fclose( FILE * filestream );
 
 - stdin, stdout
 
-Поток номер 0 (stdin) зарезервирован для чтения команд пользователя или входных данных. 
-Поток номер 1 (stdout) зарезервирован для вывода данных, как правило (хотя и не обязательно) текстовых. 
+Поток номер 0 (stdin) зарезервирован для чтения входных данных. 
+Поток номер 1 (stdout) зарезервирован для вывода данных. 
 
 - printf, scanf, fprintf, fscanf, sprintf, scanf
 
-int printf( const char * format, ... ); 
+int printf(const char* format, ... ); 
 	Пишет отформатированное по строке в stdout 
 
-int scanf( const char *format, arg-list, *char ptr); 
-	Функция scanf() является процедурой ввода общего назначения, считывающей данные из пото ка stdin. 
+int scanf(const char* format, arg-list, *char ptr); 
+	Функция scanf() является процедурой ввода общего назначения, считывающей данные из потока stdin. 
 
-int fprintf( FILE * stream, const char * format, ... ); 
+int fprintf(FILE* stream, const char* format, ... ); 
 	Функция fprintf выполняет форматированный вывод в файл. Записывает в указанный поток последовательность символов в формате,
 указанном аргументом format. 
 
-int fscanf(FILE *fp, const char * format, ..., *char ptr); 
+int fscanf(FILE* fp, const char* format, ..., *char ptr); 
 	Функция fscanf выполняет форматированное чтение из файла.
 
-int sprintf(char *buf, const char *format, arg-list); 
+int sprintf(char* buf, const char* format, arg-list); 
 	Функция sprintf() идентична printf(), за исключением того, что вывод производится в массив, указанный аргументом buf.
 Возвращаемая величина равна количеству символов, действительно занесенных в массив. 
 
-int sscanf(char *buf, const char *format, arg-list); 
+int sscanf(char* buf, const char* format, arg-list); 
 	Функция sscanf() идентична функции scanf() во всем, кроме того, что данные считываются из массива, указанного аргументом buf,
 а не из файла stdin. Возвращаемая величина равна количеству полей, значения которых действительно были при своены переменным. 
 
 - fread, fwrite, fseek, ftell, fflush
 
-size_t fread( void * ptrvoid, size_t size, size_t count, FILE * filestream ); 
+size_t fread(void* ptrvoid, size_t size, size_t count, FILE* filestream); 
 	Функция fread считывает массив размером — count элементов, каждый из которых имеет размер size байт, из потока, и сохраняет
 его в блоке памяти, на который указывает ptrvoid. 
 Индикатор положения потока увеличивается на общее число записанных байтов. Возвращается объект типа size_t, который содержит
 общее количество, успешно считанных, элементов. 
 
-size_t fwrite( const void * ptrvoid, size_t size, size_t count, FILE * filestream ); 
+size_t fwrite(const void* ptrvoid, size_t size, size_t count, FILE* filestream); 
 	Функция fwrite записывает массив размером — count элементов, каждый из которых имеет размер size байт, в блок памяти,
 на который указывает ptrvoid — текущая позиция в потоке. 
 
-int fseek( FILE * filestream, long int offset, int origin ); 
+int fseek(FILE* filestream, long int offset, int origin);//что такое origin? 
 	Функция fseek перемещает указатель позиции в потоке. Устанавливает внутренний указатель положения в файле, в новую позицию, 
 которая определяются путем добавления смещения к исходному положению. 
 SEEK_SET Начало файла 
 SEEK_CUR Текущее положение файла 
 SEEK_END Конец файла 
 
-long int ftell( FILE * filestream ); 
+long int ftell(FILE* filestream ); 
 	Функция ftell возвращает значение указателя текущего положения потока. Для бинарных потоков, возвращается значение соответствующее
 количеству байт от начала файла. 
 
-int fflush( FILE * filestream ); 
+int fflush(FILE* filestream ); 
 	Если данный поток был открыт для записи (или, если он был открыт для обновления и последняя операция ввода/вывода была операцией
 вывода) любые незаписанные данные в выходном буфере записываются в файл. Если аргумент является нулевым указателем, то открытый
 файл очищается. Поток остается открытым после этого вызова. Нулевое значение указывает на успех. 
 
 - обработка ошибок, feof, ferror
 
-int feof ( FILE * filestream ); 
+int feof (FILE* filestream ); 
 	Функция feof проверяет, достигнут ли конец файла, связанного с потоком, через параметр filestream. Возвращается значение,
 отличное от нуля, если конец файла был действительно достигнут. 
 
-int ferror( FILE * filestream ); 
+int ferror(FILE* filestream ); 
 	Функция ferror отслеживает появление ошибки, связанной с потоком, который передаётся через параметр filestream. Если ошибка
 была обнаружена, возвращается значение, отличное от нуля. Эту функцию целесообразно вызывать после выполнения предыдущей
 операции с потоком. Таким образом. если предыдущая операция выполнится с ошибкой, функция ferror проинформирует об этом.
