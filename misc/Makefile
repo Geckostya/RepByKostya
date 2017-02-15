@@ -1,7 +1,7 @@
 #You can change this values
 CC      := g++
 EXT     := cpp
-FG		:= -std=c++03 -g -Wall -Wshadow -Wextra
+FG      := -std=c++03 -g -Wall -Wshadow -Wextra
 PROGNAME:= empl_db
 
 INCDIR  := include
