@@ -1,8 +1,8 @@
 #You can change this values
 CC      := g++
 EXT     := cpp
-FG      := -std=c++03 -g -Wall -Wshadow -Wextra
-PROGNAME:= empl_db
+FG		:= -std=c++03 -g -Wall -Wshadow -Wextra -w
+PROGNAME:= main
 
 INCDIR  := include
 OBJDIR  := bin
@@ -15,7 +15,7 @@ SOURCES := $(shell find $(SRCDIR) -name '*.$(EXT)')
 OBJECTS := $(subst $(SRCDIR), $(OBJDIR), $(SOURCES:.$(EXT)=.o))
 DEPS    := $(subst $(SRCDIR), $(DEPDIR), $(SOURCES:.$(EXT)=.d))
 
-.PHONY: dirs all clean
+.PHONY: dirs all clean val run
 
 all: dirs $(PROGNAME) 
 
@@ -30,7 +30,13 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.$(EXT)
 	mv $(OBJDIR)/*.d $(DEPDIR)/
 -include $(DEPS)
 
+run:
+	./$(PROGNAME)
+
+val:
+	valgrind ./$(PROGNAME)
+
 clean:
-	rm -rf $(PROGNAME) $(OBJDIR) $(DEPDIR)
+	rm -rf $(PROGNAME) $(OBJDIR) $(DEPDIR) *.edb
 
 #Makefile by Kostya and Misha ;)
